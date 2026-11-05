@@ -111,6 +111,16 @@ else
   echo "-- security/ skipped (ufw or CrowdSec not found, or no sudo)"
 fi
 
+# Backup system: runs from root's crontab, outside Docker. Copy the scripts
+# (they read the password from /root/restic-password, never stored here),
+# the fstab line for the backup drive, and the crontab schedule.
+BAK="$REPO/backup"
+mkdir -p "$BAK"
+cp "$HOME/backup-system/backup.sh" "$HOME/backup-system/verify.sh" "$BAK/"
+grep -v '^#' /etc/fstab | grep '/mnt/backup' > "$BAK/fstab-line.txt" || true
+sudo crontab -l 2>/dev/null | grep -v '^#' > "$BAK/root-crontab.txt" || true
+echo "-> wrote backup/ (scripts, fstab line, root crontab)"
+
 # Hide my Tailscale network's name in the copies (only the copies in this repo,
 # never the real files): juanito.tail1234.ts.net becomes juanito.<tailnet>.ts.net
 hidden=$(grep -rlE 'tail[0-9a-f]+\.ts\.net' "$APPS" "$SEC" 2>/dev/null || true)

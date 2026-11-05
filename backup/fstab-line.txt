@@ -1,0 +1,1 @@
+UUID=d83c8c6f-2347-475d-a18f-fc75cd872298  /mnt/backup  ext4  defaults,nofail  0  2

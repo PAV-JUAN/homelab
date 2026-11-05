@@ -28,3 +28,11 @@ flights.ricamivida.com {
     }
     reverse_proxy localhost:8097
 }
+music.ricamivida.com {
+    import logging
+    reverse_proxy localhost:4533
+}
+juanitor.ricamivida.com {
+    import logging
+    reverse_proxy localhost:2586
+}

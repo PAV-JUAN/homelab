@@ -9,7 +9,7 @@ services:
       - MAX_DURATION_SECONDS=10800   # reject videos longer than 3h
       - FILE_TTL_SECONDS=3600        # temp files (not library songs) are deleted after 1h
       - AUTO_ADD_TO_LIBRARY=false    # true = skip the button and add every song to the library
-      - LIBRARY_SUBDIR=You Link      # folder inside the music library for converted songs
+      - LIBRARY_SUBDIR=Library       # folder inside the music library for converted songs
       - MAX_PLAYLIST_ITEMS=100       # most songs taken from one playlist
       - PUID=${PUID:-1000}           # your user id on the server (run: id -u)
       - PGID=${PGID:-1000}           # your group id on the server (run: id -g)

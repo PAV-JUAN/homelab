@@ -28,6 +28,10 @@ It's also where I practice the things I don't get to do much at my day job in IT
 | Pi-hole | Ad blocking for the whole network (DNS) | Admin page: Tailscale only |
 | Portainer | Web UI to manage the containers | Tailscale only |
 | Caddy | Reverse proxy and HTTPS for the public sites | Ports 80/443 |
+| Juanitor | I built it: a local AI that watches the server and tells my phone what broke, see [juanitor](https://github.com/PAV-JUAN/juanitor) | Nobody, it has no web page |
+| Ollama | Runs the small AI model Juanitor uses, on the CPU | Server only |
+| ntfy | Push notifications to my phone | Public, login required (deny-all by default) |
+| Picard | Fixing music tags by hand | Tailscale only |
 
 `apps/INVENTORY.md` is regenerated on every collect and lists exactly what's running.
 
@@ -35,7 +39,7 @@ It's also where I practice the things I don't get to do much at my day job in IT
 
 There are only two ways in.
 
-1. **Public sites** (Jellyfin and Fare Watch): the router forwards ports 80 and 443 to the server, Caddy takes it from there and handles HTTPS. CrowdSec reads Caddy's logs and blocks IPs that look like they're probing or attacking, and ufw blocks every port I didn't open on purpose.
+1. **Public sites** (Jellyfin, Navidrome, Fare Watch and ntfy): the router forwards ports 80 and 443 to the server, Caddy takes it from there and handles HTTPS. CrowdSec reads Caddy's logs and blocks IPs that look like they're probing or attacking, and ufw blocks every port I didn't open on purpose.
 2. **Everything else** goes through Tailscale. If your device isn't on my Tailscale network, you can't even see those apps.
 
 The domain's DNS is on Cloudflare, with a small container that updates my home IP whenever my internet provider changes it.
@@ -52,16 +56,20 @@ The website for the flight tracker connects to the database with a user that can
 
 ## Backups
 
-Every night, restic backs up the apps' data and configs to two places: a USB stick that stays plugged into the server, and an encrypted copy on Google Drive (through rclone). The USB stick is only 4 GB, so I'm picky about what goes in it. Movies and shows are skipped, since those can be downloaded again.
+Every morning at 7:30, restic backs up the apps' data and configs to two places: a 120 GB external SSD plugged into the server, and an encrypted copy on Google Drive (through rclone). The old 4 GB USB stick is now an offline spare in a drawer. Movies and shows are skipped, since those can be downloaded again.
 
-There's also a restore test script that actually restores files and checks them. A backup I've never restored is just a guess.
+After the backup, a restore test actually restores files and checks them: a canary file that must come back exactly the same, the Vaultwarden database, and the flight tracker's database. The result is written as a status line, and Juanitor alerts my phone if a backup is missed or fails. The scripts are in `backup/`.
 
 ## Things that went wrong (so far)
 
 
-**My own website didn't load at home.** flights.ricamivida.com worked from my phone on data but not from my Wi-Fi. My router can't loop traffic back to its own public IP, so now Pi-hole answers that domain with the server's local address for devices at home.
+**My backups never ran.** The restore test compared the backed-up file to the current one, so it failed as soon as I edited anything. It also ran before the backup, and `set -e` stopped the whole script there. So from the day I set it up, not a single scheduled backup happened, and nothing told me. Juanitor found it on its first day. Now the backup runs first, the test can't block it, and the test uses a file that never changes.
 
-**Tailscale.** I installed it on the server and then couldn't figure out why I couldn't reach Vaultwarden from my PC. It has to be installed on the device you're connecting *from* too. Obvious in hindsight.
+**Pi-hole lists that allowed instead of blocked.** I added new lists with the "allowlist" button by mistake, so Pi-hole was told to always allow the domains I wanted blocked.
+
+**Cloudflare's orange cloud.** A new subdomain was proxied through Cloudflare by default, so Caddy couldn't get its HTTPS certificate. My other subdomains are "DNS only" for a reason.
+
+**Free RAM that wasn't.** I tried some spare RAM sticks I had lying around. The PC beeped twice and wouldn't start. They weren't compatible, so the server stays at 10 GB.
 
 ## Updating this repo
 
@@ -80,8 +88,4 @@ git push
 3. Restore the app data from the restic backup.
 4. In each `apps/<app>/` folder, run `docker compose up -d`.
 
-## Still on my list
 
-- Login protection for Jellyfin (next)
-- Make Navidrome public through Caddy, like Jellyfin
-- My own Android app that streams music from Navidrome (started)

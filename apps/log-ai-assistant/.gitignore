@@ -1,0 +1,4 @@
+ollama-data/
+.venv/
+data/
+.env

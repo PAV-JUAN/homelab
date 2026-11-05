@@ -1,0 +1,14 @@
+services:
+  picard:
+    image: jlesage/musicbrainz-picard:latest
+    container_name: picard
+    restart: unless-stopped
+    ports:
+      - "100.91.119.112:5800:5800"
+    environment:
+      - USER_ID=1000
+      - GROUP_ID=1000
+      - TZ=America/Toronto
+    volumes:
+      - ./config:/config
+      - /home/juan/yt2mp3/music:/storage
