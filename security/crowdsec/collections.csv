@@ -2,7 +2,7 @@ name,status,version,description
 crowdsecurity/base-http-scenarios,enabled,1.4,http common : scanners detection
 crowdsecurity/caddy,enabled,0.2,caddy support : parser and generic http scenarios
 crowdsecurity/http-cve,enabled,3.0,Detect CVE exploitation in http logs
-crowdsecurity/linux,"enabled,tainted",0.4,core linux support : syslog+geoip+ssh
-crowdsecurity/sshd,"enabled,tainted",0.9,sshd support : parser and brute-force detection
+crowdsecurity/linux,enabled,0.4,core linux support : syslog+geoip+ssh
+crowdsecurity/sshd,enabled,0.9,sshd support : parser and brute-force detection
 crowdsecurity/whitelist-good-actors,enabled,0.4,Good actors whitelists
 LePresidente/jellyfin,enabled,0.2,Jellyfin support : parser and brute-force detection

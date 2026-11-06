@@ -1,4 +1,4 @@
-from juanitor import ai, evidence, jellyfin, notify, state
+from juanitor import ai, evidence, heartbeat, jellyfin, notify, state
 from juanitor.checks import backup, containers, cpu, security, smart, system
 
 
@@ -61,6 +61,7 @@ def main():
     db.close()
     note = " (someone is watching Jellyfin)" if streaming else ""
     print(f"Checked {len(findings)} items{note}.")
+    heartbeat.ping()
 
 
 if __name__ == "__main__":

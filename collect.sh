@@ -121,6 +121,14 @@ grep -v '^#' /etc/fstab | grep '/mnt/backup' > "$BAK/fstab-line.txt" || true
 sudo crontab -l 2>/dev/null | grep -v '^#' > "$BAK/root-crontab.txt" || true
 echo "-> wrote backup/ (scripts, fstab line, root crontab)"
 
+# Hardening that lives outside Docker: SSH keys only, automatic security
+# updates with reboots, and log rotation for the backup log.
+mkdir -p "$SEC/ssh" "$SEC/updates"
+cp /etc/ssh/sshd_config.d/10-keys-only.conf "$SEC/ssh/" 2>/dev/null || true
+cp /etc/apt/apt.conf.d/52unattended-reboot "$SEC/updates/" 2>/dev/null || true
+cp /etc/logrotate.d/homelab-backup "$REPO/backup/logrotate-homelab-backup" 2>/dev/null || true
+echo "-> wrote security/ssh, security/updates and the backup log rotation rule"
+
 # Hide my Tailscale network's name in the copies (only the copies in this repo,
 # never the real files): juanito.tail1234.ts.net becomes juanito.<tailnet>.ts.net
 hidden=$(grep -rlE 'tail[0-9a-f]+\.ts\.net' "$APPS" "$SEC" 2>/dev/null || true)

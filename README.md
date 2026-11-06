@@ -54,11 +54,20 @@ Passwords and API keys never go in the compose files. Each app reads them from i
 
 The website for the flight tracker connects to the database with a user that can only read two tables. Even if there's a bug in my code, it can't change or delete anything.
 
+SSH only accepts keys, no passwords, and never root. My key lives on my PC with a passphrase, and a backup copy is in Vaultwarden.
+
+Security updates install themselves every day. If one needs a reboot, the server restarts at 4 a.m. Montreal time, after the backup. The settings are in `security/updates/`.
+
+Juanitor watches the server, but it can't tell me if the whole server is off. So after every run it pings healthchecks.io, and if the pings stop for 30 minutes, I get an email. That also covers the house losing internet, or Juanitor itself crashing.
+
+
 ## Backups
 
 Every morning at 7:30, restic backs up the apps' data and configs to two places: a 120 GB external SSD plugged into the server, and an encrypted copy on Google Drive (through rclone). The old 4 GB USB stick is now an offline spare in a drawer. Movies and shows are skipped, since those can be downloaded again.
 
 After the backup, a restore test actually restores files and checks them: a canary file that must come back exactly the same, the Vaultwarden database, and the flight tracker's database. The result is written as a status line, and Juanitor alerts my phone if a backup is missed or fails. The scripts are in `backup/`.
+
+The backup log rotates once a week (8 weeks kept), so it doesn't grow forever.
 
 ## Things that went wrong (so far)
 

@@ -11,7 +11,12 @@ STATUS_LINE = re.compile(r"^(BACKUP_STATUS|RESTORE_TEST)=(OK|FAILED) (\d+)")
 
 def latest_statuses():
     latest = {}
-    for line in LOG.read_text(errors="replace").splitlines():
+    previous = LOG.with_name(LOG.name + ".1")
+    text = ""
+    for path in (previous, LOG):
+        if path.exists():
+            text += path.read_text(errors="replace") + "\n"
+    for line in text.splitlines():
         match = STATUS_LINE.match(line)
         if match:
             name, result, ts = match.groups()

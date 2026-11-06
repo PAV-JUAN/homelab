@@ -1,0 +1,7 @@
+// Reboot by itself only when an update needs it, at 4 a.m. Montreal time
+// (the server runs on UTC), after the 07:30 UTC backup.
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "09:00";
+// Clean up old kernels and leftovers so /boot doesn't fill up.
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
